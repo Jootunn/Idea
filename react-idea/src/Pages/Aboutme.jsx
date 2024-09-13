@@ -30,10 +30,10 @@ function aboutMe() {
             <p>Here are some highlights of my work:</p>
             <ul>
                 <li>A JavaScript bootcamp</li>
+                <li><a href="https://github.com/Jootunn/Idea">My github project</a></li>
             </ul>
-                {/*METTERE IL GITHUB SOPRA E SOTTO*/}
                 <h2>Let's Connect!</h2>
-                <p>If you'd like to work with me or just say hello, feel free to <a href="mailto:your-email@example.com">get in touch!</a></p>
+                <p>If you'd like to work with me or just say hello, feel free to <a href="https://github.com/Jootunn">get in touch!</a></p>
         </div>
     </section>
     )
