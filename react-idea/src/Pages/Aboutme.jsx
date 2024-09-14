@@ -10,7 +10,7 @@ function aboutMe() {
     <Navbar/>
         <div class="about-container">
             <h1>About Me</h1>
-            <p>Hello! I'm <strong>Jacopo Salta</strong>, a passionate Web Developer based in Ancona, Italy.</p>
+            <p>Hello! I'm <strong>Jacopo Salta</strong>, a passionate Web Developer (Junior) based in Ancona, Italy.</p>
 
             <h2>My Journey</h2>
             <p>I started programming for fun and then I switched it into an hobby and now I aspire to make it my job. 
