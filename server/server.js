@@ -70,7 +70,7 @@ async function getItems(userID, list) {
         text.rows.forEach((item)=> {
             list.push(item);
         })
-        return {message: "Get Item succeded:", status: 200}
+        return {message: "Get Item have succeeded:", status: 200}
     } catch (error) {
         console.error("Error getting items: ", error)
     }
@@ -107,34 +107,37 @@ async function getNotes(userID, list) {
 }
 
 async function deleteNote(userID, noteID) {
-    const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
-    const id = result.rows[0].id
-    await db.query("DELETE FROM notes WHERE check_user_id = ($1) AND id =($2)", [id, noteID])
+    try {
+        const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
+        const id = result.rows[0].id
+        await db.query("DELETE FROM notes WHERE check_user_id = ($1) AND id =($2)", [id, noteID])
+        
+    } catch (error) {
+        
+    }
+
 }
 
 async function updateNote(userID, noteID, noteTitle, noteText) {
     try {
-        // Verifica che l'utente esista
         const userResult = await db.query("SELECT id FROM users WHERE id = $1", [userID]);
         if (userResult.rows.length === 0) {
-            throw new Error('Utente non trovato');
+            throw new Error('user dont found');
         }
         const id = userResult.rows[0].id;
 
-        // Aggiorna la nota
         const updateResult = await db.query(
             "UPDATE notes SET note_title = $1, note_content = $2 WHERE id = $3 AND check_user_id = $4",
             [noteTitle, noteText, noteID, id]
         );
 
-        // Verifica se la nota è stata aggiornata
         if (updateResult.rowCount === 0) {
-            throw new Error('Nota non trovata o permesso negato');
+            throw new Error('Note dont foud or authorization denied');
         }
 
     } catch (error) {
         console.error('Errore durante l\'aggiornamento della nota:', error);
-        throw error; // Rilancia l'errore per gestirlo nel middleware dell'API
+        throw error; 
     }
 }
 //#endregion
@@ -142,8 +145,13 @@ async function updateNote(userID, noteID, noteTitle, noteText) {
 //#region LOGIN ROUTES
 
 async function get_user_by_email_id(email, id) {
-    const result = await db.query("SELECT id FROM users WHERE user_email = $1 AND user_id = $2", [email, id]);
-    return result
+    try {
+        const result = await db.query("SELECT id FROM users WHERE user_email = $1 AND user_id = $2", [email, id]);
+        return result  
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user info' });
+    }
+
 }
 
 app.post("/login", jsonParser, async (req, res) =>{
@@ -159,8 +167,6 @@ app.post("/login", jsonParser, async (req, res) =>{
 
         const result = await get_user_by_email_id(response.data.email, response.data.id)
         
-
-        // Imposta il cookie con i dati dell'utente
         res.cookie("user_data", JSON.stringify({"name" : response.data.name, "id":result.rows[0].id}), {
             sameSite: "strict",
             maxAge: 3600000, 
@@ -179,6 +185,13 @@ app.post("/login", jsonParser, async (req, res) =>{
 app.get("/get-items", jsonParser, async (req, res) => {
     const userID = req.query.userID
     _list = []
+    try {
+        await getItems(userID, _list)
+        res.json({_list})
+        res.status(200).json({success: true, message: "Get items have succeeded"})
+    } catch (error) {
+        
+    }
     await getItems(userID, _list)
     res.json({_list})
 })
@@ -186,15 +199,27 @@ app.get("/get-items", jsonParser, async (req, res) => {
 app.post("/to-do-list", jsonParser, async (req, res) => {
     const userID = req.body.userID
     const toDoItem = req.body.toDoItem
-    const result = await addItem(userID, toDoItem)
-    res.json({id :result.id});
+    try {
+        const result = await addItem(userID, toDoItem)
+        res.json({id :result.id});
+        res.status(200).json({success: true, message: "Item addes with success"})
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+
     
 })
 
 app.post("/delete-item-list", jsonParser,async (req, res) =>{
     const userID = req.body.userID
     const itemID = req.body.itemID
-    await deleteItem(userID, itemID)
+    try {
+        await deleteItem(userID, itemID)
+        res.status(200).json({success: true, message: "Item deleted with success"})
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+    
 })
 
 
@@ -207,21 +232,39 @@ app.post("/add-note", jsonParser, async (req, res) => {
     const note_title = req.body.noteTitle
     const note_content = req.body.noteContent
     const userID = req.body.userID
-    const result = await addNote(note_title, note_content, userID)
-    res.json({id : result.id})
+    try {
+        const result = await addNote(note_title, note_content, userID)
+        res.json({id : result.id})
+        res.status(200).json({success: true, message: "Note added with success"})
+    } catch (error) {
+         res.status(500).json({ success: false, message: error.message });
+    }
+
 })
 
 app.get("/get-notes", jsonParser, async (req, res) =>{
     const userID = req.query.userID
     notes = []
-    await getNotes(userID, notes)
-    res.json({notes})
+    try {
+        await getNotes(userID, notes)
+        res.json({notes})
+        res.status(200).json({success: true, message: "Get notes have succeeded"})
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+    
 })
 
 app.post("/del-note", jsonParser, async (req, res) =>{
     const userID = req.body.userID
-    const noteID = req.body.noteID    
-    await deleteNote(userID, noteID)
+    const noteID = req.body.noteID
+    try {
+        await deleteNote(userID, noteID)
+        res.status(200).json({success: true, message: "Note deleted with success"})
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+    
 })
 
 app.post("/update-note", jsonParser, async (req, res) => {
@@ -232,7 +275,7 @@ app.post("/update-note", jsonParser, async (req, res) => {
 
     try {
         await updateNote(userID, noteID, itemTitle, itemText);
-        res.status(200).json({ success: true, message: 'Nota aggiornata con successo' });
+        res.status(200).json({ success: true, message: 'Note updated with success' });
     } catch (error) {
         console.error("Errore nell'aggiornamento della nota:", error);
         res.status(500).json({ success: false, message: error.message });
