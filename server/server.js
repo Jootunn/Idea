@@ -192,8 +192,7 @@ app.get("/get-items", jsonParser, async (req, res) => {
     } catch (error) {
         
     }
-    await getItems(userID, _list)
-    res.json({_list})
+
 })
 
 app.post("/to-do-list", jsonParser, async (req, res) => {

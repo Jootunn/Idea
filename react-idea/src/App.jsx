@@ -6,7 +6,6 @@ import HomeButton from './components/Homebutton.jsx';
 import {getStoredUser} from "./components/utils.jsx"
 import Cookies from "universal-cookie"
 
-
 export let isAuthenticated = getStoredUser()
 
 const cookies = new Cookies()
@@ -15,13 +14,11 @@ function App() {
     const [user, setUser] = useState(null);
     const [profile, setProfile] = useState(null);
 
-
-
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => {
             setProfile(true)
             try {
-                axios.post("http://localhost:3000/login", {
+                axios.post(`${import.meta.env.VITE_APP_API_URL}/login`, {
                 user : codeResponse.access_token
                 }, {
                     withCredentials: true

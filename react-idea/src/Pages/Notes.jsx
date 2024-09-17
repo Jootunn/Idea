@@ -10,12 +10,11 @@ const cookies = new Cookies()
 function Notes() {
     const [items, setItems] = useState([])
     const userID= cookies.get("user_data").id
-    const [updateCount, setUpdateCount] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                let response = await axios.get("http://localhost:3000/get-notes", {
+                let response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/get-notes`, {
                     params: {
                         userID: userID
                     },
@@ -31,7 +30,7 @@ function Notes() {
 
     async function addNewItemToDatabase(note) {
         try {
-            const response = await axios.post("http://localhost:3000/add-note", {
+            const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/add-note`, {
                 noteTitle: note.title,
                 noteContent : note.content,
                 userID : userID
@@ -45,7 +44,7 @@ function Notes() {
 
     async function deleteFromDatabase(noteID) {
         try {
-            await axios.post(`http://localhost:3000/del-note`, {
+            await axios.post(`${import.meta.env.VITE_APP_API_URL}/del-note`, {
                 userID: userID,
                 noteID: noteID
             });
@@ -60,7 +59,7 @@ function Notes() {
 
     async function updateNotes(updatedNotes) {
         try {
-            const response = await axios.post("http://localhost:3000/update-note", {
+            const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/update-note`, {
                 userID: userID,
                 noteID: updatedNotes.id,
                 itemTitle: updatedNotes.title,

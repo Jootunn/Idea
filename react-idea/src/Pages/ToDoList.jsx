@@ -13,7 +13,7 @@ function ToDoList() {
     useEffect(() => {
         async function fetchData() {
             try {
-                let response = await axios.get("http://localhost:3000/get-items", {
+                let response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/get-items`, {
                     params: {
                         userID: userID
                     },
@@ -31,7 +31,7 @@ function ToDoList() {
 
     async function addNewItemToDatabase(input) {
         try {
-            const response = await axios.post("http://localhost:3000/to-do-list", {
+            const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/to-do-list`, {
                 toDoItem: input,
                 userID: userID,
             });
@@ -43,28 +43,28 @@ function ToDoList() {
     }
 
     async function deleteFromDatabase(itemId) {
+        setItems(prevItems => prevItems.filter(item => item.id !== itemId));
         try {
-            await axios.post(`http://localhost:3000/delete-item-list`, {
+            await axios.post(`${import.meta.env.VITE_APP_API_URL}/delete-item-list`, {
                 userID: userID,
                 itemID: itemId
             });
+            
         } catch (error) {
             console.error("Errore durante l'eliminazione dell'elemento", error);
         }
     }
 
-    async function deleteFromList(itemId) {
-        
-        
-        setItems(prevItems => prevItems.filter(item => item.id !== itemId));
-    }
+    // async function deleteFromList(itemId) {
+    //     setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    // }
 
     return <div className="todolist-page">
         <div className="header">
             <AddItem addItemToDatabase={addNewItemToDatabase} />
         </div>
         <div className="content-body">
-            <ListItem items={items} onDeleteFromDatabase={deleteFromDatabase} onDeleteFromList={deleteFromList}/>
+            <ListItem items={items} onDeleteFromDatabase={deleteFromDatabase} /*onDeleteFromList={deleteFromList}*//>
         </div>
     </div>
 }
