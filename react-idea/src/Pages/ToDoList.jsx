@@ -55,16 +55,12 @@ function ToDoList() {
         }
     }
 
-    // async function deleteFromList(itemId) {
-    //     setItems(prevItems => prevItems.filter(item => item.id !== itemId));
-    // }
-
     return <div className="todolist-page">
         <div className="header">
             <AddItem addItemToDatabase={addNewItemToDatabase} />
         </div>
         <div className="content-body">
-            <ListItem items={items} onDeleteFromDatabase={deleteFromDatabase} /*onDeleteFromList={deleteFromList}*//>
+            <ListItem items={items} onDeleteFromDatabase={deleteFromDatabase} />
         </div>
     </div>
 }

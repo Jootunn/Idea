@@ -5,14 +5,14 @@ import List from "./List";
 
 const cookies = new Cookies()
 
-function listItem({items = [], onDeleteFromDatabase, /*onDeleteFromList*/}) {
+function listItem({items = [], onDeleteFromDatabase }) {
 
     return (
         <div className="content">
             <ul>
                 {items.length !== 0 ? (
                     items.map((item,index) => {
-                        return <List onDeleteFromDatabase={onDeleteFromDatabase} /*onDeleteFromList={onDeleteFromList}*/ key={index} id={item.id} text={item.item_text}/>
+                        return <List onDeleteFromDatabase={onDeleteFromDatabase} key={index} id={item.id} text={item.item_text}/>
                     })
                     ) : (
                         <p>No To Do available</p>

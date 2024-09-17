@@ -1,10 +1,9 @@
 import React from "react";
 
-function List({id, text, onDeleteFromDatabase, /*onDeleteFromList*/}) {
+function List({id, text, onDeleteFromDatabase}) {
 
     function onClick() {
         onDeleteFromDatabase(id)
-        /*onDeleteFromList(id)*/
     }
 
     return (

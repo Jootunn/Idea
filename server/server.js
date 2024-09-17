@@ -92,18 +92,26 @@ async function deleteItem(userID, itemID) {
 
 //#region NOTE FUNCTIONES
 async function addNote(noteTitle, noteContent, userID) {
-    const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
-    const id = result.rows[0].id
-    const newID = await db.query("INSERT INTO notes (note_title, note_content, check_user_id) VALUES ($1, $2,$3) RETURNING ID", [noteTitle, noteContent, id])
-    return {id : newID.rows[0].id}
+    try {
+        const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
+        const id = result.rows[0].id
+        const newID = await db.query("INSERT INTO notes (note_title, note_content, check_user_id) VALUES ($1, $2,$3) RETURNING ID", [noteTitle, noteContent, id])
+        return {id : newID.rows[0].id}
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 }
 
 async function getNotes(userID, list) {
-    const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
-    const text = await db.query("SELECT id, note_title, note_content FROM notes WHERE check_user_id = $1 ORDER BY id;", [result.rows[0].id])
-    text.rows.forEach((item)=> {
-        list.push(item);
-    })
+    try {
+        const result = await db.query("SELECT id FROM users WHERE id = ($1)", [userID])
+        const text = await db.query("SELECT id, note_title, note_content FROM notes WHERE check_user_id = $1 ORDER BY id;", [result.rows[0].id])
+        text.rows.forEach((item)=> {
+            list.push(item);
+        })
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 }
 
 async function deleteNote(userID, noteID) {
@@ -113,7 +121,8 @@ async function deleteNote(userID, noteID) {
         await db.query("DELETE FROM notes WHERE check_user_id = ($1) AND id =($2)", [id, noteID])
         
     } catch (error) {
-        
+        res.status(500).json({ success: false, message: error.message });
+
     }
 
 }
@@ -190,7 +199,7 @@ app.get("/get-items", jsonParser, async (req, res) => {
         res.json({_list})
         res.status(200).json({success: true, message: "Get items have succeeded"})
     } catch (error) {
-        
+        res.status(500).json({ success: false, message: error.message });
     }
 
 })
@@ -201,7 +210,6 @@ app.post("/to-do-list", jsonParser, async (req, res) => {
     try {
         const result = await addItem(userID, toDoItem)
         res.json({id :result.id});
-        res.status(200).json({success: true, message: "Item addes with success"})
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
