@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios"
 import Cookies from "universal-cookie";
 
-function note_component({note, deleteFromDatabase, deleteFromList, updateNotes, updateFrontend}) {
+function note_component({note, deleteFromDatabase, deleteFromList, updateNotes}) {
     const [isClick, setClick] = useState(false)
     const [updatedNotes, setUpdatedNotes] = useState({
         id : note.id,
@@ -28,7 +28,6 @@ function note_component({note, deleteFromDatabase, deleteFromList, updateNotes, 
     async function submitChange() {
         const backendSuccess = await updateNotes(updatedNotes);
         if (backendSuccess) {
-            updateFrontend(updatedNotes);
             setClick(false);
         } 
     }

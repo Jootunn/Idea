@@ -15,14 +15,14 @@ function App() {
     const [profile, setProfile] = useState(null);
 
     const login = useGoogleLogin({
-        onSuccess: (codeResponse) => {
+        onSuccess: async (codeResponse) => {
             setProfile(true)
             try {
                 axios.post(`${import.meta.env.VITE_APP_API_URL}/login`, {
-                user : codeResponse.access_token
+                    user : codeResponse.access_token
                 }, {
                     withCredentials: true
-                })
+                });
             } catch (error) {
                 console.log(error);
                 

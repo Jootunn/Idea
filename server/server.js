@@ -98,7 +98,7 @@ async function addNote(noteTitle, noteContent, userID) {
         const newID = await db.query("INSERT INTO notes (note_title, note_content, check_user_id) VALUES ($1, $2,$3) RETURNING ID", [noteTitle, noteContent, id])
         return {id : newID.rows[0].id}
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)
     }
 }
 
@@ -110,7 +110,7 @@ async function getNotes(userID, list) {
             list.push(item);
         })
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)
     }
 }
 
@@ -121,8 +121,7 @@ async function deleteNote(userID, noteID) {
         await db.query("DELETE FROM notes WHERE check_user_id = ($1) AND id =($2)", [id, noteID])
         
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-
+        console.log(error)
     }
 
 }
@@ -140,10 +139,6 @@ async function updateNote(userID, noteID, noteTitle, noteText) {
             [noteTitle, noteText, noteID, id]
         );
 
-        if (updateResult.rowCount === 0) {
-            throw new Error('Note dont foud or authorization denied');
-        }
-
     } catch (error) {
         console.error('Errore durante l\'aggiornamento della nota:', error);
         throw error; 
@@ -155,10 +150,11 @@ async function updateNote(userID, noteID, noteTitle, noteText) {
 
 async function get_user_by_email_id(email, id) {
     try {
+        
         const result = await db.query("SELECT id FROM users WHERE user_email = $1 AND user_id = $2", [email, id]);
-        return result  
+        return result.rows[0].id
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch user info' });
+        console.log(error)
     }
 
 }
@@ -176,15 +172,17 @@ app.post("/login", jsonParser, async (req, res) =>{
 
         const result = await get_user_by_email_id(response.data.email, response.data.id)
         
-        res.cookie("user_data", JSON.stringify({"name" : response.data.name, "id":result.rows[0].id}), {
+        res.cookie("user_data", JSON.stringify({"name" : response.data.name, "id": result}), {
+            maxAge: 3600000,
             sameSite: "strict",
-            maxAge: 3600000, 
+            secure: true,
         });
-        
-        res.status(200).json({ message: 'Cookie impostato con successo' });
+
+        res.status(200).send({ message: "Login successful" });
+
     } catch (error) {
         console.error('Error fetching user info:', error);
-        res.status(500).json({ error: 'Failed to fetch user info' });
+        console.log(error)
     }
 })
 
@@ -197,9 +195,9 @@ app.get("/get-items", jsonParser, async (req, res) => {
     try {
         await getItems(userID, _list)
         res.json({_list})
-        res.status(200).json({success: true, message: "Get items have succeeded"})
+       
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
 
 })
@@ -210,11 +208,10 @@ app.post("/to-do-list", jsonParser, async (req, res) => {
     try {
         const result = await addItem(userID, toDoItem)
         res.json({id :result.id});
+        
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
-
-    
 })
 
 app.post("/delete-item-list", jsonParser,async (req, res) =>{
@@ -222,9 +219,9 @@ app.post("/delete-item-list", jsonParser,async (req, res) =>{
     const itemID = req.body.itemID
     try {
         await deleteItem(userID, itemID)
-        res.status(200).json({success: true, message: "Item deleted with success"})
+        res.json("Success")
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
     
 })
@@ -242,9 +239,9 @@ app.post("/add-note", jsonParser, async (req, res) => {
     try {
         const result = await addNote(note_title, note_content, userID)
         res.json({id : result.id})
-        res.status(200).json({success: true, message: "Note added with success"})
+        
     } catch (error) {
-         res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
 
 })
@@ -255,9 +252,8 @@ app.get("/get-notes", jsonParser, async (req, res) =>{
     try {
         await getNotes(userID, notes)
         res.json({notes})
-        res.status(200).json({success: true, message: "Get notes have succeeded"})
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
     
 })
@@ -267,9 +263,9 @@ app.post("/del-note", jsonParser, async (req, res) =>{
     const noteID = req.body.noteID
     try {
         await deleteNote(userID, noteID)
-        res.status(200).json({success: true, message: "Note deleted with success"})
+        res.json("Success")
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
     
 })
@@ -282,10 +278,10 @@ app.post("/update-note", jsonParser, async (req, res) => {
 
     try {
         await updateNote(userID, noteID, itemTitle, itemText);
-        res.status(200).json({ success: true, message: 'Note updated with success' });
+        res.json("Success")
     } catch (error) {
         console.error("Errore nell'aggiornamento della nota:", error);
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error)    
     }
 })
 

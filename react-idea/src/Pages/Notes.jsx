@@ -58,6 +58,13 @@ function Notes() {
     }
 
     async function updateNotes(updatedNotes) {
+        setItems(prevItems =>
+            prevItems.map(item =>
+                item.id === updatedNotes.id
+                    ? { ...item, note_title: updatedNotes.title, note_content: updatedNotes.content }
+                    : item
+            )
+        );
         try {
             const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/update-note`, {
                 userID: userID,
@@ -79,16 +86,6 @@ function Notes() {
         }
     }
 
-    function updateFrontend(updatedNotes) {
-        setItems(prevItems =>
-            prevItems.map(item =>
-                item.id === updatedNotes.id
-                    ? { ...item, note_title: updatedNotes.title, note_content: updatedNotes.content }
-                    : item
-            )
-        );
-    }
-
     return (<div>
         <Navbar/>
         <Textarea addItemToDatabase={addNewItemToDatabase} />
@@ -97,7 +94,6 @@ function Notes() {
                 {items.map((note, index)=>{
 
                     return <Note_component
-                        updateFrontend={updateFrontend}
                         deleteFromDatabase={deleteFromDatabase} 
                         deleteFromList={deleteFromList}
                         updateNotes = {updateNotes}
