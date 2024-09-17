@@ -12,8 +12,8 @@ Welcome to my first serious project! I’m excited to share this with you, and I
     - About Me
 
 3)Data Management:
-  -ToDo List: Users can add, edit, and remove tasks. These tasks are saved in a separate table in the database, associated with the user's unique ID.
-  -Notes: Users can create and manage notes. Notes are saved in a separate table, also linked to the user's unique ID.
+  - ToDo List: Users can add, edit, and remove tasks. These tasks are saved in a separate table in the database, associated with the user's unique ID.
+  - Notes: Users can create and manage notes. Notes are saved in a separate table, also linked to the user's unique ID.
 
 Please be kind:
 This is my first serious project, and I am eager to improve. Any feedback, suggestions, or constructive criticism is greatly appreciated!
