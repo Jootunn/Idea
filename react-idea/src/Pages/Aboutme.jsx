@@ -6,9 +6,9 @@ function aboutMe() {
    
     return ( 
    
-    <section class="about-section"> 
+    <section className="about-section"> 
     <Navbar/>
-        <div class="about-container">
+        <div className="about-container">
             <h1>About Me</h1>
             <p>Hello! I'm <strong>Jacopo Salta</strong>, a passionate Web Developer (Junior) based in Ancona, Italy.</p>
 
